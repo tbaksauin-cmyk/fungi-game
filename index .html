@@ -1,0 +1,115 @@
+<!doctype html><html lang="kk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Саңырауқұлақтар патшалығы — 40 сұрақ</title><style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#071b13,#17452f);color:#fff;min-height:100vh}.w{max-width:900px;margin:auto;padding:20px}
+header{text-align:center;padding:15px}header h1{font-size:clamp(28px,5vw,46px);margin:5px}.card{background:#103524;border:1px solid #397557;border-radius:22px;padding:22px;box-shadow:0 18px 45px #0007}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.st{background:#09251a;border-radius:13px;padding:12px;text-align:center}.st b{display:block;font-size:22px;color:#72e9a5}
+.bar{height:9px;background:#06150f;border-radius:20px;margin:15px 0;overflow:hidden}.bar i{display:block;height:100%;background:#72e9a5;transition:.3s}.q{font-size:22px;font-weight:bold;margin:20px 0;line-height:1.4}
+.opt{display:block;width:100%;padding:14px;margin:10px 0;text-align:left;border:1px solid #468363;border-radius:13px;background:#185039;color:#fff;font-size:16px;cursor:pointer}.opt:hover{border-color:#8cf4b7}.ok{background:#167044!important}.bad{background:#762f35!important}
+.fb{display:none;background:#09281b;border-radius:12px;padding:14px;margin-top:14px;line-height:1.5}.btn{border:0;border-radius:13px;background:#72e9a5;color:#052014;padding:13px 20px;font-size:17px;font-weight:bold;cursor:pointer;margin-top:15px}.center{text-align:center}.end{display:none}.muted{color:#c3dfd0}
+</style></head><body><div class="w"><header><div style="font-size:55px">🍄</div><h1>Саңырауқұлақтар патшалығы</h1><p class="muted">40 сұрақ • сұрақтар мен жауап нұсқалары әр ойында автоматты араласады</p></header><main class="card">
+<div id="intro" class="center"><h2>🎮 «Саңырауқұлақтар әлемі»</h2><p>Мукор, пеницилл, ашытқы, көпжасушалы және қалпақшалы саңырауқұлақтар, жеуге жарамды және улы түрлер.</p><p><b>Ерекшелігі:</b> ойынды әр бастағанда 40 сұрақтың реті де, A–D жауаптарының орналасуы да өзгереді.</p>
+<div style="max-width:520px;margin:18px auto;text-align:left">
+<label><b>Оқушының аты-жөні</b></label>
+<input id="studentName" placeholder="Мысалы: Айдана Серікқызы" style="width:100%;padding:13px;margin:7px 0 13px;border-radius:10px;border:1px solid #5b9576;font-size:16px">
+<label><b>Сыныбы</b></label>
+<input id="studentClass" placeholder="Мысалы: 8А" style="width:100%;padding:13px;margin:7px 0;border-radius:10px;border:1px solid #5b9576;font-size:16px">
+<div id="nameError" style="color:#ffd0d0;margin-top:8px"></div>
+</div>
+<button class="btn" onclick="start()">Ойынды бастау</button></div>
+<div id="game" style="display:none"><div class="stats"><div class="st">Сұрақ<b id="num"></b></div><div class="st">Ұпай<b id="score">0</b></div><div class="st">Дұрыс<b id="right">0</b></div></div><div class="bar"><i id="prog"></i></div><div class="q" id="question"></div><div id="opts"></div><div class="fb" id="feed"></div><button class="btn" id="nextb" style="display:none" onclick="nextQ()">Келесі →</button></div>
+<div id="end" class="center end"><div style="font-size:70px">🏆🍄</div><h2>Ойын аяқталды!</h2><h1 id="final"></h1><p id="msg"></p><p class="muted"><b>Жауаптарыңыз қабылданды.</b> Бұл құрылғыда ойынды қайта тапсыруға болмайды.</p></div>
+</main></div><script>
+const bank=[
+["Саңырауқұлақтар қай патшалыққа жатады?",["Жеке саңырауқұлақтар патшалығына","Өсімдіктерге","Жануарларға","Бактерияларға"],0,"Саңырауқұлақтар — жеке патшалық."],
+["Саңырауқұлақ жасуша қабырғасының маңызды заты?",["Хитин","Крахмал","Гемоглобин","Хлорофилл"],0,"Қабырғасында хитин болады."],
+["Саңырауқұлақтардың қоректену типі?",["Гетеротрофты","Автотрофты","Фототрофты","Хемосинтездік қана"],0,"Олар дайын органикалық заттармен қоректенеді."],
+["Саңырауқұлақтарда хлорофилл бар ма?",["Жоқ","Иә, барлығында","Тек мукорда","Тек ашытқыда"],0,"Саңырауқұлақтарда хлорофилл болмайды."],
+["Саңырауқұлақ денесіндегі жіп тәрізді құрылым?",["Гифа","Тамыр","Өркен","Жапырақ"],0,"Жіп тәрізді құрылым гифа деп аталады."],
+["Гифалар жиынтығы қалай аталады?",["Мицелий","Спора","Қалпақша","Спорангий"],0,"Гифалар жиынтығы — мицелий."],
+["Мицелийдің негізгі қызметтерінің бірі?",["Қоректік заттарды сіңіру","Фотосинтез жасау","Гүл түзу","Тұқым түзу"],0,"Мицелий субстраттан қоректік заттарды сіңіреді."],
+["Мукор көбіне қайда өседі?",["Нан мен органикалық тағам қалдықтарында","Тек мұхитта","Тек шөлде","Жануар сүйегінде ғана"],0,"Мукор ылғалды органикалық субстратта жиі кездеседі."],
+["Мукордың зеңі бастапқыда көбіне қандай түсті?",["Ақшыл","Қанық көк","Қызыл","Күлгін"],0,"Мукор алғашында ақ мақта тәрізді зең түзеді."],
+["Мукор споралары қай құрылымда түзіледі?",["Спорангийде","Гүлде","Жемісте","Тамырда"],0,"Споралар спорангийде түзіледі."],
+["Мукордың спорангийі қандай қызмет атқарады?",["Спора түзу","Фотосинтез","Тұқым түзу","Су өндіру"],0,"Спорангий — спора түзетін құрылым."],
+["Мукор қандай саңырауқұлаққа мысал?",["Зең саңырауқұлағына","Қалпақшалыға ғана","Ашытқыға","Балдырға"],0,"Мукор — зең саңырауқұлағы."],
+["Пеницилл қандай топқа жатады?",["Зең саңырауқұлақтарына","Балдырларға","Бактерияларға","Қарапайымдарға"],0,"Пеницилл — зең саңырауқұлағы."],
+["Пенициллдің спора түзуші ұштары нені еске түсіреді?",["Қылқаламды","Гүлді","Жапырақты","Тамырды"],0,"Оның тармақталған ұштары қылқалам тәрізді."],
+["Пенициллде жыныссыз споралар қалай аталады?",["Конидиялар","Тұқымдар","Зиготалар","Гаметалар"],0,"Пеницилл конидиялар түзе алады."],
+["Пенициллдің медицинадағы белгілі маңызы?",["Пенициллин алумен байланысты","Инсулиннің жалғыз көзі","Витамин D-нің жалғыз көзі","Қан жасушасын түзеді"],0,"Кейбір Penicillium түрлері пенициллин өндірумен байланысты."],
+["Мукор мен пенициллдің ортақ белгісі?",["Екеуі де зең саңырауқұлақтары","Екеуі де өсімдік","Екеуі де біржасушалы","Екеуінде де хлорофилл бар"],0,"Екеуі де зең саңырауқұлақтарына жатады."],
+["Мукор мен пенициллдің айырмашылығының бірі?",["Спора түзуші құрылымдарының ерекшелігі","Бірінде ДНҚ жоқ","Бірінде жасуша жоқ","Бірі жануар"],0,"Мукорда спорангий, пенициллде конидия түзуші тармақтар тән."],
+["Ашытқының кең таралған өкілдері қандай құрылымды?",["Біржасушалы","Тек көпжасушалы","Жасушасыз","Өсімдік ұлпалы"],0,"Көпшілікке таныс ашытқылар біржасушалы."],
+["Ашытқы көбіне қалай көбейеді?",["Бүршіктену арқылы","Тұқым арқылы","Тамыр арқылы","Жапырақ арқылы"],0,"Көптеген ашытқылар бүршіктеніп көбейеді."],
+["Бүршіктену кезінде не болады?",["Аналық жасушада кішкене өсінді пайда болады","Тұқым өніп шығады","Гүл ашылады","Тамыр бөлінеді"],0,"Жаңа жасуша аналық жасушадағы бүршіктен дамиды."],
+["Ашытқы қантты ашытқанда қандай газ түзіледі?",["Көмірқышқыл газы","Оттек","Азот","Хлор"],0,"Ашу кезінде CO₂ түзіледі."],
+["Спирттік ашу өнімдерінің бірі?",["Этанол","Крахмал","Хитин","Целлюлоза"],0,"Ашытқы спирттік ашуда этанол түзеді."],
+["Нан қамырының көтерілу себебі?",["CO₂ көпіршіктері","Оттектің жоғалуы","Хитин түзілуі","Мицелийдің өсуі"],0,"Ашытқы бөлген CO₂ қамырды көтереді."],
+["Ашытқы адам шаруашылығында қайда қолданылады?",["Нан пісіруде","Темір балқытуда","Пластик жасауда ғана","Тас өндіруде"],0,"Ашытқы нан пісіруде кең қолданылады."],
+["Көпжасушалы саңырауқұлақ денесінің негізін не құрайды?",["Гифалар","Жапырақтар","Тамыр түктері","Гүлдер"],0,"Олардың денесі гифалардан құралған."],
+["Қалпақшалы саңырауқұлақтың көзге көрінетін бөлігі?",["Жемісті дене","Нағыз тамыр","Гүл","Тұқым"],0,"Қалпақша мен түбіртек жемісті денеге жатады."],
+["Жемісті дененің негізгі бөліктері?",["Қалпақша мен түбіртек","Тамыр мен сабақ","Гүл мен жеміс","Жапырақ пен бүршік"],0,"Қалпақшалы саңырауқұлақта қалпақша және түбіртек ажыратылады."],
+["Қалпақшалы саңырауқұлақтардың споралары көбіне қайда түзіледі?",["Қалпақшаның астыңғы бетіндегі арнайы қабатта","Тамыр ұшында","Гүл ішінде","Жапырақта"],0,"Спора түзуші қабат қалпақшаның астыңғы жағында орналасады."],
+["Саңырауқұлақтың топырақ астындағы негізгі бөлігі?",["Мицелий","Қалпақша","Түбіртек қана","Спора ғана"],0,"Мицелий көбіне субстрат ішінде таралады."],
+["Қайсысы жеуге жарамды саңырауқұлаққа мысал?",["Қозықұйрық (шампиньон)","Боз арамқұлақ","Шыбынжұт","Белгісіз жабайы түр"],0,"Өсірілетін қозықұйрық тағам ретінде қолданылады."],
+["Қайсысы өте улы саңырауқұлақ?",["Боз арамқұлақ","Қозықұйрық","Вешенка","Ақ саңырауқұлақ"],0,"Боз арамқұлақ өте улы."],
+["Шыбынжұт туралы дұрыс тұжырым?",["Улы саңырауқұлақтардың бірі","Барлық түрі тағамдық","Өсімдік","Бактерия"],0,"Шыбынжұттың улы түрлері бар және оны тағамға қолдануға болмайды."],
+["Белгісіз жабайы саңырауқұлақты кездестіргенде не істеу керек?",["Жемеу","Дәмін тату","Иісіне қарап жеу","Шикідей жеу"],0,"Белгісіз саңырауқұлақты жеуге болмайды."],
+["Улы саңырауқұлақты пісіру әрқашан қауіпсіз ете ме?",["Жоқ","Иә, әрқашан","Тек 5 минутта","Тұз қосса жеткілікті"],0,"Кейбір токсиндер пісіруден жойылмайды."],
+["Саңырауқұлақтардың экожүйедегі маңызды қызметі?",["Органикалық қалдықтарды ыдырату","Күн сәулесін жасау","Тек ауру тарату","Суды жасау"],0,"Көптеген саңырауқұлақтар редуценттер."],
+["Редуцент саңырауқұлақтардың нәтижесінде не болады?",["Заттар айналымға қайта қосылады","Органикалық қалдық мәңгі сақталады","Фотосинтез тоқтайды","Тек оттек жойылады"],0,"Ыдырау минералдық заттардың айналымға оралуына көмектеседі."],
+["Өсімдік тамыры мен саңырауқұлақтың өзара пайдалы байланысы?",["Микориза","Спорангий","Бүршіктену","Конидия"],0,"Микориза — тамыр мен саңырауқұлақтың симбиозы."],
+["Микоризада саңырауқұлақ өсімдікке көбіне не алуға көмектеседі?",["Су мен минералдарды","Күн сәулесін","Гүлді","Тұқымды"],0,"Мицелий су мен минералдардың сіңірілуіне көмектесе алады."],
+["Саңырауқұлақтарды өсімдіктерден ажырататын негізгі белгілердің бірі?",["Хлорофиллдің болмауы","Жасушаның болмауы","ДНҚ-ның болмауы","Судың болмауы"],0,"Саңырауқұлақтар фотосинтез жасамайды және хлорофилл болмайды."]
+];
+// Google Apps Script Web App URL-ін төмендегі тырнақшаның ішіне қойыңыз.
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbw9QCvp9LGUEyHORBDvRVYRlX1W1K-lowZkpC9upT24lqZlA1dbSz15cTeRwbNx40ks/exec";
+const ATTEMPT_KEY="fungi_game_40_attempt_completed_v2";
+let studentNameValue="", studentClassValue="", answerLog=[];
+let questions=[],i=0,sc=0,rr=0,locked=false;
+function alreadyCompleted(){return localStorage.getItem(ATTEMPT_KEY)==="yes"}
+function blockCompleted(){
+  intro.innerHTML='<div style="font-size:65px">🔒</div><h2>Ойын тапсырылған</h2><p>Бұл құрылғыдан осы ойынға бір рет жауап берілген. Қайта жауап беруге рұқсат жоқ.</p>';
+}
+function shuffle(a){for(let x=a.length-1;x>0;x--){let y=Math.floor(Math.random()*(x+1));[a[x],a[y]]=[a[y],a[x]]}return a}
+function prepare(){questions=shuffle(bank.map(x=>{let arr=x[1].map((t,k)=>({t,correct:k===x[2]}));shuffle(arr);return {q:x[0],a:arr,ex:x[3]}}))}
+function start(){
+  if(alreadyCompleted()){blockCompleted();return}
+  studentNameValue=document.getElementById("studentName").value.trim();
+  studentClassValue=document.getElementById("studentClass").value.trim();
+  if(!studentNameValue||!studentClassValue){
+    document.getElementById("nameError").textContent="Аты-жөніңіз бен сыныбыңызды толық енгізіңіз.";
+    return;
+  }
+  answerLog=[]; prepare(); intro.style.display="none"; game.style.display="block"; show();
+}
+function show(){locked=false;let x=questions[i];num.textContent=(i+1)+"/40";score.textContent=sc;right.textContent=rr;prog.style.width=(i/40*100)+"%";question.textContent=x.q;opts.innerHTML="";feed.style.display="none";nextb.style.display="none";x.a.forEach((z,k)=>{let b=document.createElement("button");b.className="opt";b.textContent=String.fromCharCode(65+k)+") "+z.t;b.onclick=()=>answer(k,b);opts.appendChild(b)})}
+function answer(k,b){
+ if(locked)return;locked=true;
+ let x=questions[i],bs=[...document.querySelectorAll(".opt")],ci=x.a.findIndex(z=>z.correct);
+ bs.forEach(v=>v.disabled=true);bs[ci].classList.add("ok");
+ const isCorrect=k===ci;
+ answerLog.push({number:i+1,question:x.q,studentAnswer:x.a[k].t,correctAnswer:x.a[ci].t,isCorrect:isCorrect});
+ if(isCorrect){sc+=10;rr++;feed.innerHTML="✅ <b>Дұрыс!</b> "+x.ex}
+ else{b.classList.add("bad");feed.innerHTML="❌ <b>Қате.</b> Дұрыс жауап: <b>"+x.a[ci].t+"</b>.<br>"+x.ex}
+ score.textContent=sc;right.textContent=rr;feed.style.display="block";nextb.style.display="inline-block"
+}
+function nextQ(){i++;if(i<40)show();else finish()}
+async function finish(){
+ localStorage.setItem(ATTEMPT_KEY,"yes");
+ game.style.display="none";end.style.display="block";
+ final.textContent=sc+" / 400 ұпай";
+ msg.textContent="Нәтиже мұғалімге жіберілуде...";
+ const payload={name:studentNameValue,className:studentClassValue,score:sc,correct:rr,wrong:40-rr,percent:Math.round(rr/40*1000)/10,answers:answerLog};
+ if(SCRIPT_URL.includes("PASTE_")){
+   msg.innerHTML="⚠️ Google Apps Script сілтемесі әлі енгізілмеген. Мұғалім нәтижені қабылдау үшін SCRIPT_URL бапталуы керек.";
+   return;
+ }
+ try{
+   await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+   msg.innerHTML="✅ <b>Жауаптарыңыз қабылданды.</b><br>Нәтиже мұғалімнің Google кестесіне жіберілді.";
+ }catch(e){
+   msg.innerHTML="⚠️ Нәтижені жіберу мүмкін болмады. Мұғалімге хабарлаңыз.";
+ }
+}
+window.addEventListener("DOMContentLoaded",()=>{if(alreadyCompleted())blockCompleted()})
+</script></body></html>
