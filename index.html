@@ -99,8 +99,7 @@ async function finish(){
  game.style.display="none";end.style.display="block";
  final.textContent=sc+" / 400 ұпай";
  msg.textContent="Нәтиже мұғалімге жіберілуде...";
- const payload={name:studentNameValue,className:studentClassValue,score:sc,correct:rr,wrong:40-rr,percent:Math.round(rr/40*1000)/10,answers:answerLog};
- if(SCRIPT_URL.includes("PASTE_")){
+const payload={testName:"Саңырауқұлақтар патшалығы",name:studentNameValue,className:studentClassValue,score:sc,maxScore:400,correct:rr,wrong:40-rr,percent:Math.round(rr/40*1000)/10,answers:answerLog}; if(SCRIPT_URL.includes("PASTE_")){
    msg.innerHTML="⚠️ Google Apps Script сілтемесі әлі енгізілмеген. Мұғалім нәтижені қабылдау үшін SCRIPT_URL бапталуы керек.";
    return;
  }
